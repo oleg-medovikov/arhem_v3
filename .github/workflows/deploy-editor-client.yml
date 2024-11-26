@@ -50,20 +50,20 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: static/editor
+   deploy:
+       runs-on: ubuntu-latest
+       steps:
+       - uses: actions/download-artifact@v4
+         with:
+           path: next-bundle
+       - name: rsync deployments
+         uses: burnett01/rsync-deployments@7.0.1
+         with:
+           switches: -avzr --delete --exclude="" --include="" --filter=""
+           path: next-bundle/
+           remote_path: /home/oleg/arhem_v3/static/editor
+           remote_host:  ${{ secrets.ARHEM_IP }}
+           remote_port: 22
+           remote_user:  ${{ secrets.ARHEM_USER }}
+           remote_key: ${{ secrets.ARHEM_SRT }}
 
-  # deploy:
-  #     runs-on: ubuntu-latest
-  #     steps:
-  #     - uses: actions/download-artifact@v4
-  #       with:
-  #         path: next-bundle
-  #     - name: rsync deployments
-  #       uses: burnett01/rsync-deployments@7.0.1
-  #       with:
-  #         switches: -avzr --delete --exclude="" --include="" --filter=""
-  #         path: next-bundle/
-  #         remote_path: /var/www/html/
-  #         remote_host: example.com
-  #         remote_port: 5555
-  #         remote_user: debian
-  #         remote_key: ${{ secrets.DEPLOY_KEY }}
