@@ -35,7 +35,6 @@ export function useTheme() {
   const [mode, setMode] = useState<'dark' | 'light'>('dark');
 
   useEffect(() => {
-    // Causes server error. Wrap themed components in clientOnly HOC.
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
     const hanldeModeChange = (e: MediaQueryListEvent) => {
       setMode(e.matches ? 'dark' : 'light');

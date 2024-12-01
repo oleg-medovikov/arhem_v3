@@ -1,8 +1,7 @@
 import { Container } from '@pixi/react';
 
+import { EditorGrid } from '@/components/EditorGrid';
 import { useViewportTransform } from '@/hooks/useViewportTransform';
-
-import { EditorGrid } from './EditorGrid';
 
 export function EditorView() {
   const { tx, ty } = useViewportTransform();

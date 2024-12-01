@@ -1,6 +1,7 @@
 import { Container } from '@pixi/react';
 import { useMemo } from 'react';
 
+import { EditorGridCell } from '@/components/EditorGridCell';
 import {
   EDITOR_CELL_HEIGHT,
   EDITOR_CELL_WIDTH,
@@ -9,8 +10,6 @@ import {
   EDITOR_PADDING,
 } from '@/config';
 import { useEditorGrid } from '@/store/editor/grid';
-
-import { EditorGridCell } from './EditorGridCell';
 
 const colOffset = EDITOR_CELL_WIDTH + EDITOR_GRID_GAP_X;
 const rowOffset = EDITOR_CELL_HEIGHT + EDITOR_GRID_GAP_Y;
