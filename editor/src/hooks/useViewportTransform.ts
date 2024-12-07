@@ -2,11 +2,7 @@ import { FederatedWheelEvent } from '@pixi/events';
 import { useApp } from '@pixi/react';
 import { useEffect } from 'react';
 
-import {
-  EDITOR_CELL_HEIGHT,
-  EDITOR_CELL_WIDTH,
-  EDITOR_PADDING,
-} from '@/config';
+import { EDITOR_PADDING } from '@/config';
 import { EventButton } from '@/constants';
 import { useEditorViewport } from '@/store/editor/viewport';
 
@@ -32,18 +28,12 @@ export function useViewportTransform() {
       return;
     }
     const handleWheel = ({ deltaX, deltaY, shiftKey }: FederatedWheelEvent) => {
-      const dirModX = deltaX > 0 ? -1 : 1;
-      const dirModY = deltaY > 0 ? -1 : 1;
+      const [dx, dy] =
+        Math.abs(deltaX) > Math.abs(deltaY) ? [-deltaX, 0] : [0, -deltaY];
       if (shiftKey) {
-        translate(
-          (EDITOR_CELL_WIDTH / 2) * dirModY,
-          (EDITOR_CELL_WIDTH / 2) * dirModX
-        );
+        translate(dy, dx);
       } else {
-        translate(
-          (EDITOR_CELL_WIDTH / 2) * dirModX,
-          (EDITOR_CELL_HEIGHT / 2) * dirModY
-        );
+        translate(dx, dy);
       }
     };
     stage.on('wheel', handleWheel);
