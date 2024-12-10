@@ -23,6 +23,7 @@ export default function ArhmEditr({ Component, pageProps }: AppProps) {
       <Head>
         <link rel="icon" href="/editor/favicon.svg" />
         <link rel="apple-touch-icon" href="/editor/apple-touch-icon.png" />
+        <title>Arhm Editr</title>
       </Head>
       <style jsx global>{`
         html {

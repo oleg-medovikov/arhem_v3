@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { forwardRef, useId } from 'react';
 
 type Props = React.InputHTMLAttributes<HTMLInputElement> & {
@@ -6,14 +7,14 @@ type Props = React.InputHTMLAttributes<HTMLInputElement> & {
 };
 
 export const TextField = forwardRef<HTMLInputElement, Props>(function TextField(
-  { label, error, ...inputProps },
+  { className, label, error, ...inputProps },
   inputRef
 ) {
   const inputId = useId();
 
   return (
-    <div className="flex flex-col gap-1">
-      <label htmlFor={inputId} className="text-sm font-bold self-start">
+    <div className={clsx('flex flex-col', className)}>
+      <label htmlFor={inputId} className="text-xs font-bold self-start">
         {label}
       </label>
       <input
