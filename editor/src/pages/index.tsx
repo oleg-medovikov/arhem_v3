@@ -6,7 +6,7 @@ export default function Editor() {
   return (
     <div className="w-full h-full flex">
       <EventNav />
-      <div className="grow flex flex-col">
+      <div className="grow flex flex-col overflow-hidden">
         <EditorHeader />
         <EditorRoot />
       </div>
