@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+    <meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover"/>
+
+<meta name="description" content="A finite state machine chart with editable and interactive features." />
+<meta itemprop="description" content="A finite state machine chart with editable and interactive features." />
+<meta property="og:description" content="A finite state machine chart with editable and interactive features." />
+<meta name="twitter:description" content="A finite state machine chart with editable and interactive features." />
+
+
+<link rel="preconnect" href="https://rsms.me/">
+<link rel="stylesheet" href="/editor_test.css">
+<!-- Copyright 1998-2025 by Northwoods Software Corporation. -->
+
+
+<meta itemprop="name" content="State Chart Diagram Editor with Labeled Transition Links" />
+<meta property="og:title" content="State Chart Diagram Editor with Labeled Transition Links" />
+<meta name="twitter:title" content="State Chart Diagram Editor with Labeled Transition Links" />
+
+
+<meta property="og:image" content="https://gojs.net/latest/assets/images/screenshots/stateChart.png" />
+<meta itemprop="image" content="https://gojs.net/latest/assets/images/screenshots/stateChart.png" />
+<meta name="twitter:image" content="https://gojs.net/latest/assets/images/screenshots/stateChart.png" />
+
+<meta property="og:url" content="https://gojs.net/latest/samples/stateChart.html" />
+<meta property="twitter:url" content="https://gojs.net/latest/samples/stateChart.html" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="og:type" content="website" />
+<meta property="twitter:domain" content="gojs.net" />
+
+    <title>
+      Arhm dialod editor
+    </title>
+  </head>
+
+  <body>
+    <!-- This top nav is not part of the sample code -->
+    <nav id="navTop" class=" w-full h-[var(--topnav-h)] z-30 bg-white border-b border-b-gray-200">
+  <div class="max-w-screen-xl mx-auto flex flex-wrap items-start justify-between px-4">
+    <div class="relative">
+      <button id="topnavButton" class="h-[calc(var(--topnav-h)_-_1px)] px-2 m-0 text-gray-900 bg-inherit shadow-none md:hidden hover:!bg-inherit hover:!text-nwoods-accent hover:!shadow-none" aria-label="Navigation">
+        <svg class="h-7 w-7 block" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</nav>
+<script>
+  window.addEventListener("DOMContentLoaded", function () {
+    // topnav
+    var topButton = document.getElementById("topnavButton");
+    var topnavList = document.getElementById("topnavList");
+    if (topButton && topnavList) {
+      topButton.addEventListener("click", function (e) {
+        topnavList
+          .classList
+          .toggle("hidden");
+        e.stopPropagation();
+      });
+      document.addEventListener("click", function (e) {
+        // if the clicked element isn't the list, close the list
+        if (!topnavList.classList.contains("hidden") && !e.target.closest("#topnavList")) {
+          topButton.click();
+        }
+      });
+
+      // set active <a> element
+      var url = window
+        .location
+        .href
+        .toLowerCase();
+      var aTags = topnavList.getElementsByTagName('a');
+      for (var i = 0; i < aTags.length; i++) {
+        var lowerhref = aTags[i]
+          .href
+          .toLowerCase();
+        if (url.startsWith(lowerhref)) {
+          aTags[i]
+            .classList
+            .add('active');
+          break;
+        }
+      }
+    }
+  });
+</script>
+    <div class="flex flex-col prose">
+      <div class="w-full max-w-screen-xl mx-auto">
+        <!-- * * * * * * * * * * * * * -->
+        <!-- Start of GoJS sample code -->
+        <script src="/go.js"></script>
+
+        
+
+        <div id="allSampleContent" class="p-4 w-full">
+          
+            
+            
+
+<script id="code">
+  function init() {
+    myDiagram = new go.Diagram('myDiagramDiv', {
+      'animationManager.initialAnimationStyle': go.AnimationStyle.None,
+      InitialAnimationStarting: (e) => {
+        var animation = e.subject.defaultAnimation;
+        animation.easing = go.Animation.EaseOutExpo;
+        animation.duration = 800;
+        animation.add(e.diagram, 'scale', 0.3, 1);
+        animation.add(e.diagram, 'opacity', 0, 1);
+      },
+
+      // have mouse wheel events zoom in and out instead of scroll up and down
+      'toolManager.mouseWheelBehavior': go.WheelMode.Zoom,
+      // support double-click in background creating a new node
+      'clickCreatingTool.archetypeNodeData': { text: 'new node' },
+      // enable undo & redo
+      'undoManager.isEnabled': true
+    });
+
+    // when the document is modified, add a "*" to the title and enable the "Save" button
+    myDiagram.addDiagramListener('Modified', (e) => {
+      var button = document.getElementById('SaveButton');
+      if (button) button.disabled = !myDiagram.isModified;
+      var idx = document.title.indexOf('*');
+      if (myDiagram.isModified) {
+        if (idx < 0) document.title += '*';
+      } else {
+        if (idx >= 0) document.title = document.title.slice(0, idx);
+      }
+    });
+
+    const colors = {
+      pink: '#facbcb',
+      blue: '#b7d8f7',
+      green: '#b9e1c8',
+      yellow: '#faeb98',
+      background: '#e8e8e8'
+    };
+    const colorsDark = {
+      green: '#3fab76',
+      yellow: '#f4d90a',
+      blue: '#0091ff',
+      pink: '#e65257',
+      background: '#161616'
+    };
+    myDiagram.div.style.backgroundColor = colors.background;
+
+    myDiagram.nodeTemplate = new go.Node('Auto', {
+      isShadowed: true,
+      shadowBlur: 0,
+      shadowOffset: new go.Point(5, 5),
+      shadowColor: 'black'
+    })
+      .bindTwoWay('location', 'loc', go.Point.parse, go.Point.stringify)
+      .add(
+        new go.Shape('RoundedRectangle', {
+          strokeWidth: 1.5,
+          fill: colors.blue,
+          portId: '',
+          fromLinkable: true, fromLinkableSelfNode: false, fromLinkableDuplicates: true,
+          toLinkable: true, toLinkableSelfNode: false, toLinkableDuplicates: true,
+          cursor: 'pointer'
+        })
+          .bind('fill', 'type', (type) => {
+            if (type === 'Start') return colors.green;
+            if (type === 'End') return colors.pink;
+            return colors.blue;
+          })
+          .bind('figure', 'type', (type) => {
+            if (type === 'Start' || type === 'End') return 'Circle';
+            return 'RoundedRectangle';
+          }),
+        new go.TextBlock({
+          font: 'bold small-caps 11pt helvetica, bold arial, sans-serif',
+          shadowVisible: false,
+          margin: 8,
+          font: 'bold 14px sans-serif',
+          stroke: '#333',
+          editable: true
+        }).bindTwoWay('text')
+      );
+
+    // unlike the normal selection Adornment, this one includes a Button
+    myDiagram.nodeTemplate.selectionAdornmentTemplate = new go.Adornment('Spot')
+      .add(
+        new go.Panel('Auto')
+          .add(
+            new go.Shape('RoundedRectangle', { fill: null, stroke: colors.pink, strokeWidth: 3 }),
+            new go.Placeholder() // a Placeholder sizes itself to the selected Node
+          ),
+
+        // the button to create a "next" node, at the top-right corner
+        go.GraphObject.build('Button', {
+          alignment: go.Spot.TopRight,
+          click: addNodeAndLink // this function is defined below
+        })
+          .add(
+            new go.Shape('PlusLine', { width: 6, height: 6 })
+          ) // end button
+      );
+
+    // clicking the button inserts a new node to the right of the selected node,
+    // and adds a link to that new node
+    function addNodeAndLink(e, obj) {
+      var adornment = obj.part;
+      var diagram = e.diagram;
+      diagram.startTransaction('Add State');
+
+      // get the node data for which the user clicked the button
+      var fromNode = adornment.adornedPart;
+      var fromData = fromNode.data;
+      // create a new "State" data object, positioned off to the right of the adorned Node
+      var toData = { text: 'new' };
+      var p = fromNode.location.copy();
+      p.x += 200;
+      toData.loc = go.Point.stringify(p); // the "loc" property is a string, not a Point object
+      // add the new node data to the model
+      var model = diagram.model;
+      model.addNodeData(toData);
+
+      // create a link data from the old node data to the new node data
+      var linkdata = {
+        from: model.getKeyForNodeData(fromData), // or just: fromData.id
+        to: model.getKeyForNodeData(toData),
+        text: 'transition'
+      };
+      // and add the link data to the model
+      model.addLinkData(linkdata);
+
+      // select the new Node
+      var newnode = diagram.findNodeForData(toData);
+      diagram.select(newnode);
+      diagram.commitTransaction('Add State');
+      // if the new node is off-screen, scroll the diagram to show the new node
+      diagram.scrollToRect(newnode.actualBounds);
+    }
+
+    // replace the default Link template in the linkTemplateMap
+    myDiagram.linkTemplate = new go.Link({
+      // shadow options are for the label, not the link itself
+      isShadowed: true,
+      shadowBlur: 0,
+      shadowColor: 'black',
+      shadowOffset: new go.Point(2.5, 2.5),
+
+      curve: go.Curve.Bezier,
+      curviness: 40,
+      adjusting: go.LinkAdjusting.Stretch,
+      reshapable: true,
+      relinkableFrom: true,
+      relinkableTo: true,
+      fromShortLength: 8,
+      toShortLength: 10
+    })
+      .bindTwoWay('points')
+      .bind('curviness')
+      .add(
+        // Main shape geometry
+        new go.Shape({ strokeWidth: 2, shadowVisible: false, stroke: 'black' })
+          .bind('strokeDashArray', 'progress', (progress) => (progress ? [] : [5, 6]))
+          .bind('opacity', 'progress', (progress) => (progress ? 1 : 0.5)),
+        // Arrowheads
+        new go.Shape({ fromArrow: 'circle', strokeWidth: 1.5, fill: 'white' }).bind('opacity', 'progress', (progress) => (progress ? 1 : 0.5)),
+        new go.Shape({ toArrow: 'standard', stroke: null, scale: 1.5, fill: 'black' }).bind('opacity', 'progress', (progress) => (progress ? 1 : 0.5)),
+        // The link label
+        new go.Panel('Auto')
+          .add(
+            new go.Shape('RoundedRectangle', {
+              shadowVisible: true,
+              fill: colors.yellow,
+              strokeWidth: 0.5
+            }),
+            new go.TextBlock({
+              font: '9pt helvetica, arial, sans-serif',
+              margin: 1,
+              editable: true, // enable in-place editing
+              text: 'Action' // default text
+            }).bind('text')
+            // editing the text automatically updates the model data
+          )
+      );
+
+    // read in the JSON data from the "mySavedModel" element
+    load();
+  }
+
+  // Show the diagram's model in JSON format
+  function save() {
+    document.getElementById('mySavedModel').value = myDiagram.model.toJson();
+    myDiagram.isModified = false;
+  }
+  function load() {
+    myDiagram.model = go.Model.fromJson(document.getElementById('mySavedModel').value);
+  }
+
+  window.addEventListener('DOMContentLoaded', init);
+</script>
+
+<div id="sample">
+  <div id="myDiagramDiv" style="border: solid 1px black; width: 100%; height: 470px; background: whitesmoke"></div>
+  <div>
+    <div>
+      <button id="SaveButton" onclick="save()">Save</button>
+      <button onclick="load()">Load</button>
+      Diagram Model saved in JSON format:
+    </div>
+    <textarea id="mySavedModel" style="width: 100%; height: 300px">
+{ "class": "GraphLinksModel",
+  "nodeKeyProperty": "id",
+  "pointsDigits": 0,
+  "nodeDataArray": [
+{"id":-1,"loc":"-115 -19","type":"Start","text":"Start"},
+{"id":0,"loc":"27 16","text":"Shopping"},
+{"id":1,"loc":"221 42","text":"Browse Items"},
+{"id":2,"loc":"213 227","text":"Search Items"},
+{"id":3,"loc":"526 53","text":"View Item"},
+{"id":4,"loc":"697 -106","text":"View Cart"},
+{"id":5,"loc":"609 141","text":"Update Cart"},
+{"id":6,"loc":"931 -45","text":"Checkout"},
+{"id":-2,"loc":"792 208","type":"End","text":"End"},
+{"id":-3,"loc":"984.3541250000001 180.428875","type":"End","text":"End"}
+],
+  "linkDataArray": [
+{"from":-1,"to":0,"progress":true,"text":"Visit online store","curviness":-10,"points":[-49,-12,-39,-28,38,-186,70,16]},
+{"from":0,"to":1,"progress":true,"text":"Browse","points":[116,19,160,5,189,8,252,42]},
+{"from":0,"to":2,"progress":true,"text":"Use search bar","curviness":-70,"points":[76,50,104,162,158,219,214,231]},
+{"from":1,"to":2,"progress":true,"text":"Use search bar","points":[291,76,316,127,314,178,285,227]},
+{"from":2,"to":3,"progress":true,"text":"Click item","curviness":-70,"points":[337,245,402,245,485,199,564,87]},
+{"from":1,"to":3,"progress":true,"text":"Click item","points":[344,47,442,28,482,31,536,53]},
+{"from":3,"to":0,"progress":false,"text":"Not interested","curviness":-100,"points":[549,53,397,-43,273,-53,110,16]},
+{"from":3,"to":4,"progress":true,"text":"Add to cart","points":[584,53,621,-22,664,-60,702,-73]},
+{"from":4,"to":0,"progress":false,"text":"More shopping","curviness":-150,"points":[702,-105,472,-191,289,-158,91,16]},
+{"from":4,"to":5,"progress":false,"text":"Update needed","curviness":70,"points":[752,-72,781,20,759,91,690,141]},
+{"from":5,"to":4,"progress":false,"text":"Update made","points":[665,141,659,58,682,-13,732,-72]},
+{"from":4,"to":6,"progress":true,"text":"Proceed","points":[796,-99,833,-106,888,-92,953,-45]},
+{"from":6,"to":5,"progress":false,"text":"Update needed","points":[958,-11,851,84,779,125,721,142]},
+{"from":6,"to":-2,"progress":false,"text":"Purchase made","points":[973,-11,955,81,912,154,845,218]},
+{"from":6,"to":-3,"points":[988,-11,1025,42,1036,108,1021,181]}
+]}
+    </textarea>
+  </div>
+</div>
+
+          
+        </div>
+        <!-- * * * * * * * * * * * * * -->
+        <!--  End of GoJS sample code  -->
+      </div>
+
+      <div id="allTagDescriptions" class="p-4 w-full max-w-screen-xl mx-auto">
+         
+    </div>
+  </body>
+  <!--  This script is part of the gojs.net website, and is not needed to run the sample -->
+  <script src="../assets/js/goSamples.js"></script>
+</html>

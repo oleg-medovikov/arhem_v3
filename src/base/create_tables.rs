@@ -9,6 +9,7 @@ pub async fn create_tables(pool: &PgPool) -> Result<(), sqlx::Error> {
         "users_log_table.sql",
         "locations_table.sql",
         "events_table.sql",
+        "event_cache_table.sql",
         "event_steps_table.sql",
         "event_x_steps_table.sql",
         "event_links_table.sql",
